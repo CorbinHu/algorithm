@@ -1,0 +1,100 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) {
+ *         val = x;
+ *         next = null;
+ *     }
+ * }
+ */
+##########################################################
+# 141. 环形链表1（判断链表是否是环形链表）
+# 算法思想：
+# 通过使用具有 不同速度 的快、慢两个指针遍历链表，空间复杂度可以被降低至 O(1)。慢指针每次移动一步，而快指针每次移动两步。
+# 如果列表中不存在环，最终快指针将会最先到达尾部，此时我们可以返回 false。
+# 若快指针追上慢指针，即快慢指针指向同一节点，则是环形链表
+public boolean hasCycle(ListNode head) {
+    ListNode fast = head,slow = head;
+    while(fast != null && fast.next != null){
+        fast = fast.next.next;
+        slow = slow.next;
+        if(fast == slow){
+            return true;
+        }
+    }
+    return false;
+}
+#########################################################
+# 142.环形链表2（若链表为环形链表，则找出入环的第一个节点）
+# 算法思想：
+# 通过快慢指针来判断是否是环形链表，若为环形链表，算法逻辑如下：
+# 快指针的速度是慢指针的2倍，故所走的路程也是慢指针的2倍，假设头结点head与入环第一个节点的距离A为a,
+# 结点A与快慢指针同时指向结点B的距离为b,环的大小为s。则快慢指针相遇时，a+b=s
+# (理由：快指针始终是在环形中的第二圈追上慢指针（慢指针还是在第一圈），所以快指针所走的路程为a+b+s,慢指针的距离为a+b,2(a+b)=a+b+s)
+public class Solution {
+    public ListNode detectCycle(ListNode head) {
+        // 1.使用快慢指针判断是否有环
+        ListNode fast=head,slow=head;
+        boolean hasCycle = false;
+        while(fast != null && fast.next != null){
+            fast = fast.next.next;
+            slow = slow.next;
+            if(fast == slow){
+                hasCycle = true;
+                break;
+            }
+        }
+        // 2.寻找入环的第一个节点,快慢指针指到相同结点的时候，将慢指针移动到头结点，
+        // 且快慢指针以相同的速度移动，当慢指针移动到入环第一个节点A时（移动距离为a），快指针也移动到了结点A（移动距离为s-b）
+        if(hasCycle){
+            slow = head;
+            while(fast != slow){
+                fast = fast.next;
+                slow = slow.next;
+            }
+            return fast;
+        }else{
+            return null;
+        }      
+    }
+}
+#####################################################
+# 160.相交链表---找到两个链表相交的第一个节点
+#      1 -> 2 
+#             -> 3 -> 4 -> 5
+# 6 -> 8 -> 9
+# 算法思想：
+# 转化为环形链表，找入环的第一个节点的问题（142）来做，算法思想相同。及将节点5和节点6连接起来组成环结点1,2就是非环部分。
+public class Solution {
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        if(headA == null||headB == null){
+            return null;
+        }
+        ListNode last = headB;
+        // 找到链表B的最后一个结点
+        while(last.next != null){
+            last = last.next;
+        }
+        last.next = headB;//首尾相连，组成环
+        // 找到入环的第一个结点（即为两个链表相交的第一个结点）
+        ListNode fast = headA,slow = headA;
+        while(fast != null && fast.next != null){
+            fast = fast.next.next;
+            slow = slow.next;
+            if(fast == slow){
+                slow = headA;
+                while(slow != fast){
+                    slow = slow.next;
+                    fast = fast.next;
+                }
+                // 在返回结果后，两个链表仍须保持原有的结构。
+                last.next = null;
+                return fast;//fast指向相交的结点
+            }                           
+        }
+        last.next = null;
+        return null;
+    }
+}
