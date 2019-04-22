@@ -98,3 +98,85 @@ public class Solution {
         return null;
     }
 }
+##########################################################
+# 876. 寻找链表的中间结点
+# [1,2,3,4,5,6] 返回的是结点值4，返回是一个链表[4,5,6]
+class Solution {
+    public ListNode middleNode(ListNode head) {
+        ListNode slow = head,fast = head;
+        while(fast!=null&&fast.next!=null){ // 若改为返回结点值3，[3,4,5,6]，则改为while(fast.next!=null&&fast.next.next!=null)
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        return slow;
+    }
+}
+###############################################################
+# 234. 回文链表 
+# [1,2,1] [1,2,2,1],[],[1]等为回文链表
+# 要求：时间复杂度为O(n),空间复杂度为O(1)
+# 算法思想：
+# 【算法1】 找到链表的中间结点，将后半部分链表反转成一个新的链表，再将两个链表进行比较。
+class Solution {
+    public boolean isPalindrome(ListNode head) {
+        if (head == null || head.next == null) {
+            return true;
+        }
+        ListNode fast=head,slow=head;
+        // 找中间结点
+        while(fast.next!=null&&fast.next.next!=null){
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+        // slow为中间结点，返转slow之后的结点，组成新链表
+        ListNode curr = slow.next;
+        ListNode prev = null;
+        while(curr!=null){
+            ListNode tempNode = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = tempNode;
+        }
+        // prev即为反转后列表的头结点（也是原链表的尾结点）
+        // 比较两个链表相不相等
+        while(prev!=null){
+            if(prev.val!=head.val){
+                return false;
+            }
+            prev = prev.next;
+            head = head.next;
+        }
+        return true;
+    }
+}
+# 【算法2---没看懂】
+class Solution {
+    public boolean isPalindrome(ListNode head) {
+        // 判断[],[1]这类回文链表
+        if(head==null||head.next==null){
+            return true;
+        }
+        // 判断[1,2,1]这类回文链表
+        if(head.next.next==null){
+            return head.val == head.next.val;
+        }
+        ListNode slow = head;
+        ListNode fast = head.next;
+        while(fast.next!=null){
+            if(slow.val == fast.next.val){
+                if(fast.next.next!=null){
+                    return false;
+                }
+                fast.next = null;
+                slow = slow.next;
+                fast = slow.next;
+                if(fast==null || slow.val == fast.val){
+                    return true;
+                }
+            }else{
+                fast = fast.next;
+            }
+        }
+        return false;
+    }
+}
