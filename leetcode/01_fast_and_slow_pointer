@@ -180,3 +180,37 @@ class Solution {
         return false;
     }
 }
+################################################################
+# 143.重排链表
+# 1.用快慢指针找到中点，从中点拆成两个链表
+# 2.反转后面的链表
+# 3.遍历两个链表，将后面链表插入到前面链表的间隙
+class Solution {
+    public void reorderList(ListNode head) {
+        if(head==null) return;
+        ListNode fast = head,slow = head;
+        while(fast.next!=null&&fast.next.next!=null){
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+        ListNode newhead = slow.next;
+        slow.next = null; // head--->slow 第一个链，newhead--->fast 第二个链
+        // 将第二个链反转
+        ListNode prev = null,curr=newhead;
+        while(curr!=null){
+            ListNode tempNode = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = tempNode;
+        }
+        curr = head;
+        while(curr!=null&&prev!=null){
+            ListNode tempNode1 = curr.next;
+            ListNode tempNode2 = prev.next;
+            curr.next = prev;
+            curr = tempNode1;
+            prev.next = tempNode1;
+            prev = tempNode2;        
+        }
+    }
+}
