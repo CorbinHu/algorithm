@@ -1,0 +1,48 @@
+稳定排序的意义：保证两次排序结果相同
+
+######################################################
+# 1. 归并排序:
+# 算法思想：
+# 将无序序列先分解，在合并排序。从1分2，2分4，依次分解，当分解到只有一个数为一组时，该子数组就为有序，
+# 在将2个有序数组合并排序回原来的序列中
+######################################################
+  public int[] sort(int[] sourceArray) {
+        // 对 arr 进行拷贝，不改变参数内容
+        int[] arr = Arrays.copyOf(sourceArray, sourceArray.length);
+
+        if (arr.length < 2) {
+            return arr;
+        }
+        int middle = (int) Math.floor(arr.length / 2);
+
+        int[] left = Arrays.copyOfRange(arr, 0, middle);
+        int[] right = Arrays.copyOfRange(arr, middle, arr.length);
+
+        return merge(sort(left), sort(right));
+    }
+
+    protected int[] merge(int[] left, int[] right) {
+        int[] result = new int[left.length + right.length];
+        int i = 0;
+        while (left.length > 0 && right.length > 0) {
+            if (left[0] <= right[0]) {
+                result[i++] = left[0];
+                left = Arrays.copyOfRange(left, 1, left.length);
+            } else {
+                result[i++] = right[0];
+                right = Arrays.copyOfRange(right, 1, right.length);
+            }
+        }
+
+        while (left.length > 0) {
+            result[i++] = left[0];
+            left = Arrays.copyOfRange(left, 1, left.length);
+        }
+
+        while (right.length > 0) {
+            result[i++] = right[0];
+            right = Arrays.copyOfRange(right, 1, right.length);
+        }
+
+        return result;
+    }
